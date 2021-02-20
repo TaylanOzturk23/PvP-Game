@@ -71,4 +71,4 @@ After inserting these files to a same directory, just run main.py and have fun !
 
 
 # Preview and informative video
-[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://youtu.be/vt5fpE0bzSY)
+

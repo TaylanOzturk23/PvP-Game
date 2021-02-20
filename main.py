@@ -478,7 +478,7 @@ class Game:
                                         xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         """
                     )
-                    exit()
+                    self.status = False
                 
                 elif not self.enemy_health > 0:
                     break

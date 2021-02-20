@@ -395,20 +395,20 @@ class Game:
             
                 --> Categories of brawler statistics:
                 
-                Offensive:
+                 Offensive:
                     Strength: It increases your Physical Damage. Your Physical Damage depends on this skill
                     Magic: It increases your Magical Damage. Your Magical Damage depends on this skill
                     Agility: Its value is multiplied by 1.5 and
                      there is a 25% Chance that you can add this damage next to your normal damage.
                 
-                Defancive:
+                 Defancive:
                     Stamina: It decreases your opponnent's damage
                 
-                Accuracy:
+                 Accuracy:
                     Attack: It increases your succesful attack chance. So your accuracy depends on this skill
                     Defence: It increases your block chance.
                     
-                Health:
+                 Health:
                     Vitality: Its value is multiplied by three and added to your health. 
                 
                 --> WARNING:
@@ -435,6 +435,15 @@ class Game:
                  And here are some attack styles. Magical and physical attack styles.
                  Magical attacks are more effective than physical attacks. 
                  But magical attack's accuracy is lower.
+                 
+                 
+                 --> TIP:   
+                 It is recommended to upgrade physical damage in the early stages, 
+                 and it is recommended to use one of the attack styles, the "quick" style. 
+                 Because the magic damage in the early stages is unlikely to be accurate.
+                 Likewise, "powerful" and "critical" attack styles are unlikely to be accurate.
+                 So it is recommended to be prone to physical damage in the early stages and 
+                 to use the "quick" style heavily.
                 ------------------------------------------------------------------------------
                 """
             )

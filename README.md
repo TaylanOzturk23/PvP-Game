@@ -4,7 +4,8 @@ A game like "Swords and Sandals II" with python and played in terminal.
 # Info about game shortly 
 This text is excerpted from the game. So the same text is also available in the game.
 
-"""
+
+                """
                 -------------------------------------------------------------------------------
                 Welcome to the Game ! 
                 This is a PvP game played in terminal and it also like "Swords and Sandals II". 

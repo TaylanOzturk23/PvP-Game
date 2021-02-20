@@ -108,38 +108,49 @@ class Game:
             ↓↓
             """
         )
-    
-        amounts = []
-        for i in "".join(upgraded_skills.split("|")):
-            if i.isdigit():
-                amounts.append(int(i))
-        
-        abilities = []
-        for i in range(len("".join(("".join(upgraded_skills.split("|")).split(":"))).split()) - 1):
-            if "".join(("".join(upgraded_skills.split("|")).split(":"))).split()[i].isalpha():
-                abilities.append("".join(("".join(upgraded_skills.split("|")).split(":"))).split()[i])
-          
-        for i in range(len(abilities)):
-            try:
-                self.player_statistics[self.coordination[abilities[i].lower().capitalize()]] += amounts[i]
-            except KeyError:
-                print("Please be sensitive to spaces")
-            
-        if sum(amounts) > self.player_skill_points:
-            print(f"\n{60 * '*'}")
-            print("\tOut of range skill points" + f"\n\t\t You have {self.player_skill_points} skill points but you spent {sum(amounts)}")
-            print(60 * "*")
+        if not upgraded_skills.strip():
+            print(
+                """
+                
+                                **********************************
+                                You Must Spend Your Skill Points
+                                **********************************    
+                """
+            )
             self.skill_upgrade_menu()
-        
-        else:
-            with open("player_skills.json", "w") as data_base:
-                datas = dict(self.player_skill_datas)
-                new_statistic = [i[0] + i[1] for i in list(zip([i for i in datas.values()], [i for i in self.player_statistics]))]
-                json.dump(dict(zip(self.coordination.keys(), new_statistic)), data_base)
             
-            with open("skill_points.json", "w") as data_base:
-                self.player_skill_points -= sum(amounts)
-                json.dump(list([self.player_skill_points, self.enemy_skill_point]), data_base)
+        else:
+            amounts = []
+            for i in "".join(upgraded_skills.split("|")):
+                if i.isdigit():
+                    amounts.append(int(i))
+            
+            abilities = []
+            for i in range(len("".join(("".join(upgraded_skills.split("|")).split(":"))).split()) - 1):
+                if "".join(("".join(upgraded_skills.split("|")).split(":"))).split()[i].isalpha():
+                    abilities.append("".join(("".join(upgraded_skills.split("|")).split(":"))).split()[i])
+            
+            for i in range(len(abilities)):
+                try:
+                    self.player_statistics[self.coordination[abilities[i].lower().capitalize()]] += amounts[i]
+                except KeyError:
+                    print("Please be sensitive to spaces")
+                
+            if sum(amounts) > self.player_skill_points:
+                print(f"\n{60 * '*'}")
+                print("\tOut of range skill points" + f"\n\t\t You have {self.player_skill_points} skill points but you spent {sum(amounts)}")
+                print(60 * "*")
+                self.skill_upgrade_menu()
+            
+            else:
+                with open("player_skills.json", "w") as data_base:
+                    datas = dict(self.player_skill_datas)
+                    new_statistic = [i[0] + i[1] for i in list(zip([i for i in datas.values()], [i for i in self.player_statistics]))]
+                    json.dump(dict(zip(self.coordination.keys(), new_statistic)), data_base)
+                
+                with open("skill_points.json", "w") as data_base:
+                    self.player_skill_points -= sum(amounts)
+                    json.dump(list([self.player_skill_points, self.enemy_skill_point]), data_base)
     
 
     def encountering(self, hit: int):

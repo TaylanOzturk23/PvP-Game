@@ -41,7 +41,7 @@ class Game:
         with open("skill_points.json", "r") as data_base:
             self.player_skill_points = list(json.load(data_base))[0]
             data_base.seek(0)
-            self.enemy_skill_point = list(json.load(data_base))[1]
+            self.enemy_skill_points = list(json.load(data_base))[1]
         
         with open("player_skills.json", "r") as data_base:
             self.player_skill_datas = json.load(data_base)
@@ -150,7 +150,7 @@ class Game:
                 
                 with open("skill_points.json", "w") as data_base:
                     self.player_skill_points -= sum(amounts)
-                    json.dump(list([self.player_skill_points, self.enemy_skill_point]), data_base)
+                    json.dump(list([self.player_skill_points, self.enemy_skill_points]), data_base)
     
 
     def encountering(self, hit: int):
@@ -370,27 +370,27 @@ class Game:
         
         # increase enemy skill points according to stages.
         if self.stage % 2 != 0 and self.stage % 5 == 0:
-            self.enemy_skill_point += 5
+            self.enemy_skill_points += 5
              
         elif self.stage % 10 == 0:
-            self.enemy_skill_point += 10
+            self.enemy_skill_points += 10
             
         else:
-            self.enemy_skill_point += 1
+            self.enemy_skill_points += 1
         
         # enemy statistics
         if self.stage == 1:
-            self.enemy_statistics = self.distribute(self.enemy_skill_point)
+            self.enemy_statistics = self.distribute(self.enemy_skill_points)
         
         else:
-            self.enemy_statistics = self.distribute(self.enemy_skill_point)
+            self.enemy_statistics = self.distribute(self.enemy_skill_points)
 
         # saving amounts to files.
         with open("enemy_skills.json", "w") as data_base:
             json.dump(self.enemy_statistics, data_base)
         
         with open("skill_points.json", "w") as data_base:
-            json.dump(list([self.player_skill_points, self.enemy_skill_point]), data_base)
+            json.dump(list([self.player_skill_points, self.enemy_skill_points]), data_base)
         
         with open("stage.txt", "w") as data_base:
             print(str(self.stage), file=data_base, flush=True)
@@ -490,7 +490,7 @@ class Game:
                 
             self.player_skill_points += 1
             with open("skill_points.json", "w") as data_base:
-                json.dump(list([self.player_skill_points, self.enemy_skill_point]), data_base)
+                json.dump(list([self.player_skill_points, self.enemy_skill_points]), data_base)
 
             print(
                 """

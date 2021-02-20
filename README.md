@@ -1,8 +1,8 @@
 # PvP-Game
-## A game like "Swords and Sandals II" with python and played in terminal.
+#### A game like "Swords and Sandals II" with python and played in terminal.
 
 # Info about game shortly 
-## This text is excerpted from the game. So the same text is also available in the game.
+#### This text is excerpted from the game. So the same text is also available in the game.
 
                 """
                 -------------------------------------------------------------------------------

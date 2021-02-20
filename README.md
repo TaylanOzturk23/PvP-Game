@@ -68,3 +68,7 @@
 Just clone this repository and insert them to a same directory.
 It is important which directory are these files having in. All of them should stay in a same directory.
 After inserting these files to a same directory, just run main.py and have fun !
+
+
+# Preview and informative video
+[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://youtu.be/vt5fpE0bzSY)

@@ -71,5 +71,5 @@ After inserting these files to a same directory, just run main.py and have fun !
 
 
 # Preview and informative video
-[![Watch the video](https://www.google.com/imgres?imgurl=https%3A%2F%2Fst1.myideasoft.com%2Fidea%2Fct%2F82%2Fmyassets%2Fblogs%2Fpython.jpg&imgrefurl=https%3A%2F%2Fwww.abakuskitap.com%2Fblog%2Ficerik%2Fpython-dilinin-bir-anda-populer-olmasinin-5-temel-sebebi&tbnid=8byMfvgc-oZ-WM&vet=12ahUKEwjqn-yly_vuAhVIHBoKHSIBAu0QMygFegUIARCzAQ..i&docid=Uzj9DoKvNxgagM&w=1200&h=580&q=python&ved=2ahUKEwjqn-yly_vuAhVIHBoKHSIBAu0QMygFegUIARCzAQ)](https://youtu.be/T-D1KVIuvjA)
+[![Watch the video](https://youtu.be/4ShLU_Ner08)
 

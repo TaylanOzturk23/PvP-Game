@@ -36,7 +36,7 @@ class Game:
             self.stages = iter(range(int(stage.read()), 101))
             
         with open("enemy_names.json", "r") as enemy_name_datas:
-            self.enemy_names = iter(list(json.load(enemy_name_datas)))
+            self.enemy_names = list(json.load(enemy_name_datas))
         
         with open("skill_points.json", "r") as data_base:
             self.player_skill_points = list(json.load(data_base))[0]
@@ -108,49 +108,38 @@ class Game:
             ↓↓
             """
         )
-        if not upgraded_skills.strip():
-            print(
-                """
+
+        amounts = []
+        for i in "".join(upgraded_skills.split("|")):
+            if i.isdigit():
+                amounts.append(int(i))
+            
+        abilities = []
+        for i in range(len("".join(("".join(upgraded_skills.split("|")).split(":"))).split()) - 1):
+            if "".join(("".join(upgraded_skills.split("|")).split(":"))).split()[i].isalpha():
+                abilities.append("".join(("".join(upgraded_skills.split("|")).split(":"))).split()[i])
+            
+        for i in range(len(abilities)):
+            try:
+                self.player_statistics[self.coordination[abilities[i].lower().capitalize()]] += amounts[i]
+            except KeyError:
+                print("Please be sensitive to spaces")
                 
-                                **********************************
-                                You Must Spend Your Skill Points
-                                **********************************    
-                """
-            )
+        if sum(amounts) > self.player_skill_points:
+            print(f"\n{60 * '*'}")
+            print("\tOut of range skill points" + f"\n\t\t You have {self.player_skill_points} skill points but you spent {sum(amounts)}")
+            print(60 * "*")
             self.skill_upgrade_menu()
             
         else:
-            amounts = []
-            for i in "".join(upgraded_skills.split("|")):
-                if i.isdigit():
-                    amounts.append(int(i))
-            
-            abilities = []
-            for i in range(len("".join(("".join(upgraded_skills.split("|")).split(":"))).split()) - 1):
-                if "".join(("".join(upgraded_skills.split("|")).split(":"))).split()[i].isalpha():
-                    abilities.append("".join(("".join(upgraded_skills.split("|")).split(":"))).split()[i])
-            
-            for i in range(len(abilities)):
-                try:
-                    self.player_statistics[self.coordination[abilities[i].lower().capitalize()]] += amounts[i]
-                except KeyError:
-                    print("Please be sensitive to spaces")
+            with open("player_skills.json", "w") as data_base:
+                datas = dict(self.player_skill_datas)
+                new_statistic = [i[0] + i[1] for i in list(zip([i for i in datas.values()], [i for i in self.player_statistics]))]
+                json.dump(dict(zip(self.coordination.keys(), new_statistic)), data_base)
                 
-            if sum(amounts) > self.player_skill_points:
-                print(f"\n{60 * '*'}")
-                print("\tOut of range skill points" + f"\n\t\t You have {self.player_skill_points} skill points but you spent {sum(amounts)}")
-                print(60 * "*")
-                self.skill_upgrade_menu()
-            
-            else:
-                with open("player_skills.json", "w") as data_base:
-                    datas = dict(self.player_skill_datas)
-                    new_statistic = [i[0] + i[1] for i in list(zip([i for i in datas.values()], [i for i in self.player_statistics]))]
-                    json.dump(dict(zip(self.coordination.keys(), new_statistic)), data_base)
-                
-                with open("skill_points.json", "w") as data_base:
-                    self.player_skill_points -= sum(amounts)
-                    json.dump(list([self.player_skill_points, self.enemy_skill_points]), data_base)
+            with open("skill_points.json", "w") as data_base:
+                self.player_skill_points -= sum(amounts)
+                json.dump(list([self.player_skill_points, self.enemy_skill_points]), data_base)
     
 
     def encountering(self, hit: int):
@@ -158,7 +147,7 @@ class Game:
             "Block": self.player_statistics[self.coordination["Defence"]],
             "Accuracy": self.player_statistics[self.coordination["Attack"]],
             "Physical Damage": self.player_statistics[self.coordination["Strength"]] - self.enemy_statistics[self.coordination["Stamina"]],
-            "Magical Damage": self.player_statistics[self.coordination["Magic"]] - self.enemy_statistics[self.coordination["Stamina"]], 
+            "Magical Damage": self.player_statistics[self.coordination["Magic"]] * 2.5 - self.enemy_statistics[self.coordination["Stamina"]], 
             "Damage Absorption": self.player_statistics[self.coordination["Stamina"]],
             "Additional Damage": self.player_statistics[self.coordination["Agility"]] * 1.5
         }
@@ -166,7 +155,7 @@ class Game:
             "Block": self.enemy_statistics[self.coordination["Defence"]],
             "Accuracy": self.enemy_statistics[self.coordination["Attack"]],
             "Physical Damage": self.enemy_statistics[self.coordination["Strength"]] - self.player_statistics[self.coordination["Stamina"]],
-            "Magical Damage": self.enemy_statistics[self.coordination["Magic"]] - self.player_statistics[self.coordination["Stamina"]], 
+            "Magical Damage": self.enemy_statistics[self.coordination["Magic"]] * 2.5 - self.player_statistics[self.coordination["Stamina"]], 
             "Damage Absorption": self.enemy_statistics[self.coordination["Stamina"]],
             "Additional Damage": self.enemy_statistics[self.coordination["Agility"]] * 1.5
         }
@@ -232,51 +221,58 @@ class Game:
                           *********************************
             """
         )
-        self.player_physical_damage = abs(self.enemy_figth_statistics["Damage Absorption"] - self.player_figth_statistics["Physical Damage"] + (self.player_figth_statistics["Additional Damage"] if self.percent(25) else False))
-        self.player_magical_damage = abs(self.enemy_figth_statistics["Damage Absorption"] - self.player_figth_statistics["Magical Damage"]) * 2 + (self.enemy_figth_statistics["Additional Damage"] if self.percent(25) else False)
         
-          
+        # Absolute Damages
+        self.player_physical_damage = self.player_figth_statistics["Physical Damage"] + (self.player_figth_statistics["Additional Damage"] if self.percent(30) else 0) - self.enemy_figth_statistics["Damage Absorption"]
+        self.player_physical_damage = 0 if self.player_physical_damage < 0 else self.player_physical_damage
+        
+        self.player_magical_damage = self.player_figth_statistics["Magical Damage"] + (self.player_figth_statistics["Additional Damage"] if self.percent(30) else 0) - self.enemy_figth_statistics["Damage Absorption"]
+        self.player_magical_damage = 0 if self.player_magical_damage < 0 else self.player_magical_damage
+        
+        
+        # ------ Player's hit -----------
+         
         if player_hit_style == "10":
-            if self.percent(5 + self.player_figth_statistics["Accuracy"] - self.enemy_figth_statistics["Block"]):
-                self.enemy_health -= self.player_physical_damage * 6
+            if self.percent(10 + self.player_figth_statistics["Accuracy"] - self.enemy_figth_statistics["Block"]):
+                self.enemy_health -= self.player_physical_damage * 6 # Multiplied by 6 because this is a critical damage.
                 print(self.figth_result_text.format("You", self.player_physical_damage * 6, "Physical", self.player_health, self.enemy_health))
             
             else:
                 print(blocked_hit_text.format("Your Opponnent Blocked Your Hit !"))
                 
         elif player_hit_style == "11":
-            if self.percent(5 + self.player_figth_statistics["Accuracy"]-35 - self.enemy_figth_statistics["Block"]):
-                self.enemy_health -= self.player_magical_damage * 6
+            if self.percent(10 + self.player_figth_statistics["Accuracy"]-35 - self.enemy_figth_statistics["Block"]):
+                self.enemy_health -= self.player_magical_damage * 6 # Multiplied by 6 because this is a critical damage.
                 print(self.figth_result_text.format("You", self.player_magical_damage * 6, "Magical", self.player_health, self.enemy_health))
         
             else:
                 print(blocked_hit_text.format("Your Opponnent Blocked Your Hit !"))
                 
         elif player_hit_style == "20":
-            if self.percent(10 + self.player_figth_statistics["Accuracy"] - self.enemy_figth_statistics["Block"]):
-                self.enemy_health -= self.player_physical_damage * 3
+            if self.percent(20 + self.player_figth_statistics["Accuracy"] - self.enemy_figth_statistics["Block"]):
+                self.enemy_health -= self.player_physical_damage * 3 # Multiplied by 3 because this is a powerful damage.
                 print(self.figth_result_text.format("You", self.player_physical_damage * 3, "Physical", self.player_health, self.enemy_health))
     
             else:
                 print(blocked_hit_text.format("Your Opponnent Blocked Your Hit !"))
                 
         elif player_hit_style == "21":
-            if self.percent(10 + self.player_figth_statistics["Accuracy"]-35 - self.enemy_figth_statistics["Block"]):
-                self.enemy_health -= self.player_magical_damage * 3
+            if self.percent(20 + self.player_figth_statistics["Accuracy"]-35 - self.enemy_figth_statistics["Block"]):
+                self.enemy_health -= self.player_magical_damage * 3 # Multiplied by 3 because this is a powerful damage.
                 print(self.figth_result_text.format("You", self.player_magical_damage * 3, "Magical", self.player_health, self.enemy_health))
             else:
                 print(blocked_hit_text.format("Your Opponnent Blocked Your Hit !"))
                 
         elif player_hit_style == "30":
-            if self.percent(65 + self.player_figth_statistics["Accuracy"] - self.enemy_figth_statistics["Block"]):
-                self.enemy_health -= self.player_physical_damage
+            if self.percent(70 + self.player_figth_statistics["Accuracy"] - self.enemy_figth_statistics["Block"]):
+                self.enemy_health -= self.player_physical_damage # No multiplication because this is a quick attack style.
                 print(self.figth_result_text.format("You", self.player_physical_damage, "Physical", self.player_health, self.enemy_health))
             else:
                 print(blocked_hit_text.format("Your Opponnent Blocked Your Hit !"))
                 
         elif player_hit_style == "31":
-            if self.percent(65 + self.player_figth_statistics["Accuracy"]-35 - self.enemy_figth_statistics["Block"]):
-                self.enemy_health -= self.player_magical_damage
+            if self.percent(70 + self.player_figth_statistics["Accuracy"]-35 - self.enemy_figth_statistics["Block"]):
+                self.enemy_health -= self.player_magical_damage # No multiplication because this is a quick attack style.
                 print(self.figth_result_text.format("You", self.player_magical_damage, "Magical", self.player_health, self.enemy_health))
             else:
                 print(blocked_hit_text.format("Your Opponnent Blocked Your Hit !"))
@@ -284,7 +280,8 @@ class Game:
         else:
             print("Please dial a number displayed in menu")
         
-    
+        
+        #      ------ enemy's hit -----------
         print(
             """
                             ***********************
@@ -305,8 +302,12 @@ class Game:
         ]
         self.enemy_hit_style = random.choice(random.choice(random.choice(styles)))
         
-        self.enemy_physical_damage = abs(self.player_figth_statistics["Damage Absorption"] - self.enemy_figth_statistics["Physical Damage"] + (self.enemy_figth_statistics["Additional Damage"] if self.percent(25) else False))
-        self.enemy_magical_damage = abs(self.player_figth_statistics["Damage Absorption"] - self.enemy_figth_statistics["Magical Damage"] * 2 + (self.enemy_figth_statistics["Additional Damage"] if self.percent(25) else False))
+        # Absolute Damages
+        self.enemy_physical_damage = self.enemy_figth_statistics["Physical Damage"] + (self.enemy_figth_statistics["Additional Damage"] if self.percent(30) else 0) - self.player_figth_statistics["Damage Absorption"]
+        self.enemy_physical_damage = 0 if self.enemy_physical_damage < 0 else self.enemy_physical_damage
+        
+        self.enemy_magical_damage = self.enemy_figth_statistics["Magical Damage"] + (self.enemy_figth_statistics["Additional Damage"] if self.percent(30) else 0) - self.player_figth_statistics["Damage Absorption"]
+        self.enemy_magical_damage = 0 if self.enemy_physical_damage < 0 else self.enemy_physical_damage
         
         if self.enemy_hit_style == "Critical Physical":
             if self.percent(5 + self.enemy_figth_statistics["Accuracy"] - self.player_figth_statistics["Block"]):
@@ -366,7 +367,7 @@ class Game:
             self.status = False
         
         # define enemy names
-        self.enemy_name = next(self.enemy_names)
+        self.enemy_name = self.enemy_names[self.stage-1]
         
         # increase enemy skill points according to stages.
         if self.stage % 2 != 0 and self.stage % 5 == 0:
@@ -420,7 +421,7 @@ class Game:
                     Defence: It increases your block chance.
                     
                  Health:
-                    Vitality: Its value is multiplied by three and added to your health. 
+                    Vitality: Its value is multiplied by three (ten if stage is more than 20) and added to your health. 
                 
                 --> WARNING:
                  Everything is saved when you exit the program.
@@ -460,11 +461,11 @@ class Game:
             )
             self.skill_upgrade_menu()
         
-        # Healths
-        self.player_health = 30 + self.player_statistics[self.coordination["Vitality"]] * 3
-        self.enemy_health = 30 + self.enemy_statistics[self.coordination["Vitality"]] * 3
+        # Healths 
+        self.player_health = 30 + self.player_statistics[self.coordination["Vitality"]] * (3 if self.stage < 20 else 10)
+        self.enemy_health = 30 + self.enemy_statistics[self.coordination["Vitality"]] * (3 if self.stage < 20 else 10)
         
-        # Hit
+        # Refresh hit for next stage.
         self.hit = 0
         
         # Loop of every stage.
@@ -478,7 +479,7 @@ class Game:
                                         xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         """
                     )
-                    self.status = False
+                    exit()
                 
                 elif not self.enemy_health > 0:
                     break

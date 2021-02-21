@@ -411,7 +411,7 @@ class Game:
                     Strength: It increases your Physical Damage. Your Physical Damage depends on this skill
                     Magic: It increases your Magical Damage. Your Magical Damage depends on this skill
                     Agility: Its value is multiplied by 1.5 and
-                     there is a 25% Chance that you can add this damage next to your normal damage.
+                     there is a 30% Chance that you can add this damage next to your normal damage.
                 
                  Defancive:
                     Stamina: It decreases your opponnent's damage

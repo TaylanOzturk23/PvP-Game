@@ -144,19 +144,15 @@ class Game:
 
     def encountering(self, hit: int):
         self.player_figth_statistics = {
-            "Block": self.player_statistics[self.coordination["Defence"]],
-            "Accuracy": self.player_statistics[self.coordination["Attack"]],
+            "Accuracy": self.player_statistics[self.coordination["Attack"]] - self.enemy_statistics[self.coordination["Defence"]],
             "Physical Damage": self.player_statistics[self.coordination["Strength"]] - self.enemy_statistics[self.coordination["Stamina"]],
             "Magical Damage": self.player_statistics[self.coordination["Magic"]] * 2.5 - self.enemy_statistics[self.coordination["Stamina"]], 
-            "Damage Absorption": self.player_statistics[self.coordination["Stamina"]],
             "Additional Damage": self.player_statistics[self.coordination["Agility"]] * 1.5
         }
         self.enemy_figth_statistics = {
-            "Block": self.enemy_statistics[self.coordination["Defence"]],
-            "Accuracy": self.enemy_statistics[self.coordination["Attack"]],
+            "Accuracy": self.enemy_statistics[self.coordination["Attack"]] - self.player_statistics[self.coordination["Defence"]],
             "Physical Damage": self.enemy_statistics[self.coordination["Strength"]] - self.player_statistics[self.coordination["Stamina"]],
             "Magical Damage": self.enemy_statistics[self.coordination["Magic"]] * 2.5 - self.player_statistics[self.coordination["Stamina"]], 
-            "Damage Absorption": self.enemy_statistics[self.coordination["Stamina"]],
             "Additional Damage": self.enemy_statistics[self.coordination["Agility"]] * 1.5
         }
         
@@ -223,17 +219,17 @@ class Game:
         )
         
         # Absolute Damages
-        self.player_physical_damage = self.player_figth_statistics["Physical Damage"] + (self.player_figth_statistics["Additional Damage"] if self.percent(30) else 0) - self.enemy_figth_statistics["Damage Absorption"]
+        self.player_physical_damage = self.player_figth_statistics["Physical Damage"] + (self.player_figth_statistics["Additional Damage"] if self.percent(30) else 0) 
         self.player_physical_damage = 0 if self.player_physical_damage < 0 else self.player_physical_damage
         
-        self.player_magical_damage = self.player_figth_statistics["Magical Damage"] + (self.player_figth_statistics["Additional Damage"] if self.percent(30) else 0) - self.enemy_figth_statistics["Damage Absorption"]
+        self.player_magical_damage = self.player_figth_statistics["Magical Damage"] + (self.player_figth_statistics["Additional Damage"] if self.percent(30) else 0)
         self.player_magical_damage = 0 if self.player_magical_damage < 0 else self.player_magical_damage
         
         
         # ------ Player's hit -----------
          
         if player_hit_style == "10":
-            if self.percent(10 + self.player_figth_statistics["Accuracy"] - self.enemy_figth_statistics["Block"]):
+            if self.percent(10 + self.player_figth_statistics["Accuracy"]):
                 self.enemy_health -= self.player_physical_damage * 6 # Multiplied by 6 because this is a critical damage.
                 print(self.figth_result_text.format("You", self.player_physical_damage * 6, "Physical", self.player_health, self.enemy_health))
             
@@ -241,7 +237,7 @@ class Game:
                 print(blocked_hit_text.format("Your Opponnent Blocked Your Hit !"))
                 
         elif player_hit_style == "11":
-            if self.percent(10 + self.player_figth_statistics["Accuracy"]-35 - self.enemy_figth_statistics["Block"]):
+            if self.percent(10 + self.player_figth_statistics["Accuracy"]-20): # minus twenty. Because it is magical damage.
                 self.enemy_health -= self.player_magical_damage * 6 # Multiplied by 6 because this is a critical damage.
                 print(self.figth_result_text.format("You", self.player_magical_damage * 6, "Magical", self.player_health, self.enemy_health))
         
@@ -249,7 +245,7 @@ class Game:
                 print(blocked_hit_text.format("Your Opponnent Blocked Your Hit !"))
                 
         elif player_hit_style == "20":
-            if self.percent(20 + self.player_figth_statistics["Accuracy"] - self.enemy_figth_statistics["Block"]):
+            if self.percent(20 + self.player_figth_statistics["Accuracy"]):
                 self.enemy_health -= self.player_physical_damage * 3 # Multiplied by 3 because this is a powerful damage.
                 print(self.figth_result_text.format("You", self.player_physical_damage * 3, "Physical", self.player_health, self.enemy_health))
     
@@ -257,21 +253,21 @@ class Game:
                 print(blocked_hit_text.format("Your Opponnent Blocked Your Hit !"))
                 
         elif player_hit_style == "21":
-            if self.percent(20 + self.player_figth_statistics["Accuracy"]-35 - self.enemy_figth_statistics["Block"]):
+            if self.percent(20 + self.player_figth_statistics["Accuracy"]-20): # minus twenty. Because it is magical damage.
                 self.enemy_health -= self.player_magical_damage * 3 # Multiplied by 3 because this is a powerful damage.
                 print(self.figth_result_text.format("You", self.player_magical_damage * 3, "Magical", self.player_health, self.enemy_health))
             else:
                 print(blocked_hit_text.format("Your Opponnent Blocked Your Hit !"))
                 
         elif player_hit_style == "30":
-            if self.percent(70 + self.player_figth_statistics["Accuracy"] - self.enemy_figth_statistics["Block"]):
+            if self.percent(70 + self.player_figth_statistics["Accuracy"]):
                 self.enemy_health -= self.player_physical_damage # No multiplication because this is a quick attack style.
                 print(self.figth_result_text.format("You", self.player_physical_damage, "Physical", self.player_health, self.enemy_health))
             else:
                 print(blocked_hit_text.format("Your Opponnent Blocked Your Hit !"))
                 
         elif player_hit_style == "31":
-            if self.percent(70 + self.player_figth_statistics["Accuracy"]-35 - self.enemy_figth_statistics["Block"]):
+            if self.percent(70 + self.player_figth_statistics["Accuracy"]-20): # minus twenty. Because it is magical damage.
                 self.enemy_health -= self.player_magical_damage # No multiplication because this is a quick attack style.
                 print(self.figth_result_text.format("You", self.player_magical_damage, "Magical", self.player_health, self.enemy_health))
             else:
@@ -303,55 +299,55 @@ class Game:
         self.enemy_hit_style = random.choice(random.choice(random.choice(styles)))
         
         # Absolute Damages
-        self.enemy_physical_damage = self.enemy_figth_statistics["Physical Damage"] + (self.enemy_figth_statistics["Additional Damage"] if self.percent(30) else 0) - self.player_figth_statistics["Damage Absorption"]
+        self.enemy_physical_damage = self.enemy_figth_statistics["Physical Damage"] + (self.enemy_figth_statistics["Additional Damage"] if self.percent(30) else 0)
         self.enemy_physical_damage = 0 if self.enemy_physical_damage < 0 else self.enemy_physical_damage
         
-        self.enemy_magical_damage = self.enemy_figth_statistics["Magical Damage"] + (self.enemy_figth_statistics["Additional Damage"] if self.percent(30) else 0) - self.player_figth_statistics["Damage Absorption"]
+        self.enemy_magical_damage = self.enemy_figth_statistics["Magical Damage"] + (self.enemy_figth_statistics["Additional Damage"] if self.percent(30) else 0)
         self.enemy_magical_damage = 0 if self.enemy_physical_damage < 0 else self.enemy_physical_damage
         
         if self.enemy_hit_style == "Critical Physical":
-            if self.percent(5 + self.enemy_figth_statistics["Accuracy"] - self.player_figth_statistics["Block"]):
-                self.player_health -= self.enemy_physical_damage * 6
+            if self.percent(5 + self.enemy_figth_statistics["Accuracy"]):
+                self.player_health -= self.enemy_physical_damage * 6 # Multiplied by 6 because this is a critical damage.
                 print(self.figth_result_text.format("Enemy", self.enemy_physical_damage * 6, "Physical", self.player_health, self.enemy_health))
                 
             else:
                 print(blocked_hit_text.format("You Blocked your Opponnent's Hit"))
             
         elif self.enemy_hit_style == "Critical Magical":
-            if self.percent(5 + self.enemy_figth_statistics["Accuracy"]-35 - self.player_figth_statistics["Block"]):
-                self.player_health -= self.enemy_magical_damage * 6
+            if self.percent(5 + self.enemy_figth_statistics["Accuracy"]-20): # minus twenty. Because it is magical damage.
+                self.player_health -= self.enemy_magical_damage * 6 # Multiplied by 6 because this is a critical damage.
                 print(self.figth_result_text.format("Enemy", self.enemy_magical_damage * 6, "Magical", self.player_health, self.enemy_health))
                 
             else:
                 print(blocked_hit_text.format("You Blocked your Opponnent's Hit"))
             
         elif self.enemy_hit_style == "Powerful Physical":
-            if self.percent(10 + self.enemy_figth_statistics["Accuracy"] - self.player_figth_statistics["Block"]):
-                self.player_health -= self.enemy_physical_damage * 3
+            if self.percent(10 + self.enemy_figth_statistics["Accuracy"]):
+                self.player_health -= self.enemy_physical_damage * 3 # Multiplied by 3 because this is a powerful damage.
                 print(self.figth_result_text.format("Enemy", self.enemy_physical_damage * 3, "Physical", self.player_health, self.enemy_health))
                 
             else:
                 print(blocked_hit_text.format("You Blocked your Opponnent's Hit"))
             
         elif self.enemy_hit_style == "Powerful Magical":
-            if self.percent(10 + self.enemy_figth_statistics["Accuracy"]-35 - self.player_figth_statistics["Block"]):
-                self.player_health -= self.enemy_magical_damage * 3
+            if self.percent(10 + self.enemy_figth_statistics["Accuracy"]-20): # minus twenty. Because it is magical damage.
+                self.player_health -= self.enemy_magical_damage * 3 # Multiplied by 3 because this is a powerful damage.
                 print(self.figth_result_text.format("Enemy", self.enemy_magical_damage * 3, "Magical", self.player_health, self.enemy_health))
                 
             else:
                 print(blocked_hit_text.format("You Blocked your Opponnent's Hit"))
             
         elif self.enemy_hit_style == "Quickly Physical":
-            if self.percent(65 + self.enemy_figth_statistics["Accuracy"] - self.player_figth_statistics["Block"]):
-                self.player_health -= self.enemy_physical_damage
+            if self.percent(65 + self.enemy_figth_statistics["Accuracy"]):
+                self.player_health -= self.enemy_physical_damage # No Multiplication because this is a powerful damage.
                 print(self.figth_result_text.format("Enemy", self.enemy_physical_damage, "Physical", self.player_health, self.enemy_health))
                 
             else:
                 print(blocked_hit_text.format("You Blocked your Opponnent's Hit"))
             
         elif self.enemy_hit_style == "Quickly Magical":
-            if self.percent(65 + self.enemy_figth_statistics["Accuracy"]-35 - self.player_figth_statistics["Block"]):
-                self.player_health -= self.enemy_magical_damage
+            if self.percent(65 + self.enemy_figth_statistics["Accuracy"]-20): # minus twenty. Because it is magical damage.
+                self.player_health -= self.enemy_magical_damage # No Multiplication because this is a powerful damage.
                 print(self.figth_result_text.format("Enemy", self.enemy_magical_damage, "Magical", self.player_health, self.enemy_health))
                 
             else:

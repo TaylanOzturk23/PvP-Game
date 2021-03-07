@@ -66,6 +66,7 @@ class Game:
 
         return result
     
+    
     @staticmethod
     def percent(percent: int) -> bool:
         return True if random.choice([i for i in range(1, 101)]) <= percent else False

@@ -234,10 +234,10 @@ class Game:
         )
         
         # Absolute Damages (physical)
-        self.player_physical_damage = self.player_figth_statistics["Physical Damage"] + (self.player_figth_statistics["Additional Damage"] if self.percent(30) else 0) 
+        self.player_physical_damage = self.player_figth_statistics["Physical Damage"] + (self.player_figth_statistics["Additional Damage"] if self.percent(20) else 0) 
         self.player_physical_damage = 0 if self.player_physical_damage < 0 else self.player_physical_damage
         # Absolute Damages (magical)
-        self.player_magical_damage = self.player_figth_statistics["Magical Damage"] + (self.player_figth_statistics["Additional Damage"] if self.percent(30) else 0)
+        self.player_magical_damage = self.player_figth_statistics["Magical Damage"] + (self.player_figth_statistics["Additional Damage"] if self.percent(20) else 0)
         self.player_magical_damage = 0 if self.player_magical_damage < 0 else self.player_magical_damage
         
         
@@ -315,10 +315,10 @@ class Game:
         self.enemy_hit_style = random.choice(random.choice(random.choice(styles)))
         
         # Absolute Damages
-        self.enemy_physical_damage = self.enemy_figth_statistics["Physical Damage"] + (self.enemy_figth_statistics["Additional Damage"] if self.percent(30) else 0)
+        self.enemy_physical_damage = self.enemy_figth_statistics["Physical Damage"] + (self.enemy_figth_statistics["Additional Damage"] if self.percent(20) else 0)
         self.enemy_physical_damage = 0 if self.enemy_physical_damage < 0 else self.enemy_physical_damage
         
-        self.enemy_magical_damage = self.enemy_figth_statistics["Magical Damage"] + (self.enemy_figth_statistics["Additional Damage"] if self.percent(30) else 0)
+        self.enemy_magical_damage = self.enemy_figth_statistics["Magical Damage"] + (self.enemy_figth_statistics["Additional Damage"] if self.percent(20) else 0)
         self.enemy_magical_damage = 0 if self.enemy_physical_damage < 0 else self.enemy_physical_damage
         
         if self.enemy_hit_style == "Critical Physical":
